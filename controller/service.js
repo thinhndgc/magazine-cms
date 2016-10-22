@@ -1,0 +1,61 @@
+module.service('service',function($rootScope,$http){
+  this.makeRequest = function(data) {
+    var url = "http://localhost:69/MagazineCMS/server_side/api.php";
+    var returnData;
+    var request = $http({
+      method: "post",
+      url: url,
+      data: data,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+    request.success(function (data) {
+      return data;
+    });
+    request.error(function() {
+      return JSON.stringify({ status: 0 },{ msg: 'Make request error'});
+    });
+    return request;
+  };
+  this.authen = function(page) {
+    var isLogin;
+    var role;
+    var saveLoginSession = localStorage.getItem('saveLoginSession');
+    if (saveLoginSession === 'true') {
+      isLogin = localStorage.getItem('isLogin');
+      role = localStorage.getItem('role');
+      this.switchRole(isLogin,page,role);
+    }else if (saveLoginSession==='false' && saveLoginSession!== null && saveLoginSession!== undefined) {
+      isLogin = sessionStorage.getItem('isLogin');
+      role = sessionStorage.getItem('role');
+      this.switchRole(isLogin,page,role);
+    }else {
+      this.clearLoginData();
+      location.replace('login.html');
+    }
+  };
+  this.switchRole = function(isLogin,page,role) {
+    if (isLogin === undefined || isLogin === false) {
+      location.replace('login.html');
+    }else {
+      switch (page) {
+        case 'admin':
+          if (role != 'Admin') {
+            this.clearLoginData();
+            location.replace('login.html');
+          }else {
+            $('#body').removeClass("body-hide");
+          }
+          break;
+        default:
+
+      }
+    }
+  };
+  this.clearLoginData = function() {
+    localStorage.removeItem('loginData');
+    localStorage.removeItem('isLogin');
+    localStorage.removeItem('role');
+    localStorage.removeItem('role');
+    localStorage.removeItem('saveLoginSession');
+  };
+});
