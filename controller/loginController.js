@@ -20,6 +20,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
     var data = 'callType=checkLogin&email='+$scope.email+'&password='+$scope.password;
     service.makeRequest(data).then(function(response){
       $scope.returnData = response.data;
+      console.log($scope.returnData);
       if ($scope.returnData.status == 1) {
         $scope.saveLoginInfor();
         $scope.router($scope.returnData);
@@ -40,7 +41,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
   };
   $scope.router = function(data) {
     switch (data.role) {
-      case 'admin':
+      case 'Admin':
       if ($('#remember-me').is(':checked')) {
         localStorage.setItem('saveLoginSession',true);
         localStorage.setItem('role','Admin');
@@ -50,6 +51,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('role','Admin');
         sessionStorage.setItem('isLogin',true);
       }
+      localStorage.setItem('fullName',data.fullName);
       location.replace("admin.html");
       break;
       case 'MM':
@@ -62,6 +64,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('role','MM');
         sessionStorage.setItem('isLogin',true);
       }
+      localStorage.setItem('fullName',data.fullName);
       location.replace("mm-index.html");
       break;
       case 'MC':
@@ -74,6 +77,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('role','MC');
         sessionStorage.setItem('isLogin',true);
       }
+      localStorage.setItem('fullName',data.fullName);
       $rootScope.facultiesOfMC = data.faculties;
       location.replace("mc-index.html");
       break;
@@ -87,6 +91,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('role','Student');
         sessionStorage.setItem('isLogin',true);
       }
+      localStorage.setItem('fullName',data.fullName);
       $rootScope.facultiesOfStudent = data.faculties;
       location.replace("student.html");
       break;
@@ -100,6 +105,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('role','Guest');
         sessionStorage.setItem('isLogin',true);
       }
+      localStorage.setItem('fullName',data.fullName);
       $rootScope.facultiesOfGuest = data.faculties;
       location.replace("guest.html");
       break;

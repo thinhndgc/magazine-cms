@@ -16,7 +16,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /*background: url('https://unsplash.it/3000/3000?random');*/
+  background: url('../images/loginbg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
