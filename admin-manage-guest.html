@@ -14,6 +14,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <script src="js/module.js"></script>
   <script src="controller/service.js"></script>
   <script src="controller/adminController.js"></script>
+  <script src="controller/adminGuestController.js"></script>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -69,15 +70,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- The user image in the navbar-->
                 <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs">Alexander Pierce</span>
+                <span class="hidden-xs" id="fullName"></span>
               </a>
               <ul class="dropdown-menu">
                 <!-- The user image in the menu -->
                 <li class="user-header">
                   <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
-                  <p>
-                    Alexander Pierce - Web Developer
+                  <p ng-model="fullNameWithRole">
                   </p>
                 </li>
                 <!-- Menu Body -->
@@ -110,9 +110,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
           </div>
           <div class="pull-left info">
-            <p>Alexander Pierce</p>
+            <p id="fullNameWithRole"></p>
             <!-- Status -->
-            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            <a href="#" id="role"><i class="fa fa-circle text-success"></i></a>
           </div>
         </div>
 
@@ -172,7 +172,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="content-wrapper" ng-controller="adminGuestController">
       <!-- Content Header (Page header) -->
       <section class="content-header">
           <h1>
@@ -199,10 +199,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- text input -->
                   <div class="form-group">
                     <label>Select Faculties</label>
-                    <select class="form-control">
-                      <option>F1</option>
-                      <option>F2</option>
-                      <option>F3</option>
+                    <select class="form-control" ng-model="selectedFalcities">
+                      <option ng-repeat="f in aFalcuties">{{f.falcuties_name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -217,8 +215,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <button type="button" class="btn btn-primary">Reset</button>
+                <button type="submit" class="btn btn-primary" ng-click="createGuestAccount()">Create</button>
+                <button type="button" class="btn btn-primary" ng-click="reset()">Reset</button>
               </div>
             </div>
             <!-- /.box -->
@@ -235,26 +233,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- text input -->
                   <div class="form-group">
                     <label>Select Faculties</label>
-                    <select class="form-control">
-                      <option>F1</option>
-                      <option>F2</option>
-                      <option>F3</option>
+                    <select class="form-control" ng-model="selectedFalcities">
+                      <option ng-repeat="f in aFalcuties">{{f.falcuties_name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label>Email</label>
-                    <input type="text" class="form-control" placeholder="Email" ng-model="email">
+                    <input type="text" class="form-control" placeholder="Email" ng-model="emailEdit">
                   </div>
                   <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-control" placeholder="Password" ng-model="password">
+                    <input type="password" class="form-control" placeholder="Keep empty for not change" ng-model="passwordEdit">
                   </div>
                 </form>
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Edit</button>
-                <button type="button" class="btn btn-primary btnBack" onclick="showCreate()">Back</button>
+                <button type="submit" class="btn btn-primary" ng-click="editGuestAccount()">Edit</button>
+                <button type="button" class="btn btn-primary btnBack" ng-click="showCreate()">Back</button>
               </div>
             </div>
             <!-- /.box -->
@@ -265,30 +261,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <h3 class="box-title">View All Guests</h3>
               </div>
               <!-- /.box-header -->
-              <div class="box-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Email</th>
-                      <th>Faculty</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td><a href="#" class="btn btn-default btnEdit" role="button" onclick="showEdit()">Edit</a> <a href="#" class="btn btn-default btnDelete" role="button">Delete</a></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Mark</td>
-                      <td>Otto</td>
-                      <td><a href="#" class="btn btn-default btnEdit" role="button" onclick="showEdit()">Edit</a> <a href="#" class="btn btn-default btnDelete" role="button">Delete</a></td>
-                    </tr>
-                  </tbody>
+              <div class="box-body table-responsive no-padding">
+                <table class="box-body table table-striped">
+                  <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Email</th>
+                    <th>Pasword</th>
+                    <th>Faculty</th>
+                    <th>Action</th>
+                  </tr>
+                  <tr ng-repeat="m in sG">
+                    <th scope="row">{{$index+1}}</th>
+                    <td>{{m.email}}</td>
+                    <td>{{m.password}}</td>
+                    <td>{{m.falcuties_name}}</td>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
+                      <a href="#" class="btn btn-default btnDelete" role="button" ng-click="deleteGuestAccount($index)">Delete</a>
+                    </td>
+                  </tr>
                 </table>
               </div>
               <!-- /.box-body -->

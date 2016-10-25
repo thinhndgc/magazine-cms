@@ -46,6 +46,38 @@ module.service('service',function($rootScope,$http){
             $('#body').removeClass("body-hide");
           }
           break;
+          case 'MM':
+          if (role != 'MM') {
+            this.clearLoginData();
+            location.replace('login.html');
+          }else {
+            $('#body').removeClass("body-hide");
+          }
+          break;
+          case 'MC':
+          if (role != 'MC') {
+            this.clearLoginData();
+            location.replace('login.html');
+          }else {
+            $('#body').removeClass("body-hide");
+          }
+          break;
+          case 'Student':
+          if (role != 'Student') {
+            this.clearLoginData();
+            location.replace('login.html');
+          }else {
+            $('#body').removeClass("body-hide");
+          }
+          break;
+          case 'Guest':
+          if (role != 'Guest') {
+            this.clearLoginData();
+            location.replace('login.html');
+          }else {
+            $('#body').removeClass("body-hide");
+          }
+          break;
         default:
 
       }
@@ -57,5 +89,25 @@ module.service('service',function($rootScope,$http){
     localStorage.removeItem('role');
     localStorage.removeItem('role');
     localStorage.removeItem('saveLoginSession');
+  };
+  this.uploadImage = function (form_data) {
+    var url = "http://localhost:69/MagazineCMS/server_side/upload.php";
+    var returnData;
+    var request = $http({
+      method: "post",
+      url: url,
+      data: form_data,
+      cache: false,
+      contentType: false,
+      processData: false,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+    request.success(function (data) {
+      return data;
+    });
+    request.error(function() {
+      return JSON.stringify({ status: 0 },{ msg: 'Make request error'});
+    });
+    return request;
   };
 });

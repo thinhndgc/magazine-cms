@@ -260,7 +260,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </div>
                   <div class="form-group">
                     <label>Select Gender</label>
-                    <select class="form-control">
+                    <select class="form-control" ng-model="genderEdit">
                       <option>Male</option>
                       <option>Female</option>
                     </select>
@@ -271,7 +271,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </div>
                   <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-control" placeholder="Password" ng-model="passwordEdit">
+                    <input type="password" class="form-control" placeholder="Keep empty for not change" ng-model="passwordEdit">
                   </div>
                   <div class="form-group">
                     <label>Phone Number</label>
@@ -296,11 +296,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <div class="col-md-9 col-sm-12 col-xs-12">
             <div class="box">
               <div class="box-header">
-                <h3 class="box-title">View All Students</h3>
+                <div class="row">
+                  <div class="col-md-3 col-sm-3 col-xs-3">
+                    <h4 class="box-title" style="margin-bottom:15px">View by faculties</h4>
+                    <select class="form-control" ng-model="selectedFalcitiesFillter" ng-change="fillterStudent()">
+                      <option>All</option>
+                      <option ng-repeat="f in aFalcuties">{{f.falcuties_name}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-7 col-sm-7 col-xs-7">
+                    <h4 class="box-title" style="margin-bottom:15px">Search</h4>
+                    <input type=text class="form-control" ng-model="searchText" placeholder="Type something"/>
+                  </div>
+                </div>
               </div>
               <!-- /.box-header -->
-              <div class="box-body">
-                <table class="table table-striped">
+              <div class="box-body table-responsive no-padding">
+                <table class="box-body table table-striped">
                 <tr>
                   <th style="width: 10px">#</th>
                   <th>Fullname</th>
@@ -312,7 +324,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <th>Falcuties</th>
                   <th>Action</th>
                 </tr>
-                <tr ng-repeat="s in sStudent">
+                <tr ng-repeat="s in sStudent | filter:selectedFalcitiesFillter | filter:searchText">
                   <th scope="row">{{$index+1}}</th>
                   <td>{{s.full_name}}</td>
                   <td>{{s.gender}}</td>
@@ -322,7 +334,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <td>{{s.phone}}</td>
                   <td>{{s.falcuties_name}}</td>
                   <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
-                    <a href="#" class="btn btn-default btnDelete" role="button">Delete</a>
+                    <a href="#" class="btn btn-default btnDelete" role="button" ng-click="deleteStudentAccount($index)">Delete</a>
                   </td>
                 </tr>
               </table>

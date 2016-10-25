@@ -93,7 +93,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
       }
       localStorage.setItem('fullName',data.fullName);
       $rootScope.facultiesOfStudent = data.faculties;
-      location.replace("student.html");
+      location.replace("student-view-all-articles.html");
       break;
       case 'Guest':
       if ($('#remember-me').is(':checked')) {

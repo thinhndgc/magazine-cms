@@ -33,13 +33,111 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $gender = isset($_POST['gender']) ? $_POST['gender'] : "";
     $currentEmail = isset($_POST['currentEmail']) ? $_POST['currentEmail'] : "";
     $newEmail = isset($_POST['newEmail']) ? $_POST['newEmail'] : "";
+    $currentPassword = isset($_POST['currentPassword']) ? $_POST['currentPassword'] : "";
     $password = isset($_POST['password']) ? $_POST['password'] : "";
     $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
     $falcutiesName = isset($_POST['falcutiesName']) ? $_POST['falcutiesName'] : "";
-    $data = editStudentAccount($uid,$full_name,$dob,$gender,$currentEmail,$newEmail,$password,$phone,$falcutiesName);
+    $data = editStudentAccount($uid,$full_name,$dob,$gender,$currentEmail,$newEmail,$currentPassword,$password,$phone,$falcutiesName);
     break;
-    case 'deleteStudent':
-
+    case 'deleteStudentAccount':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = deleteStudentAccount($uid);
+    break;
+    case 'createMMAccount':
+    $full_name = isset($_POST['fullName']) ? $_POST['fullName'] : "";
+    $dob = isset($_POST['dob']) ? $_POST['dob'] : "";
+    $gender = isset($_POST['gender']) ? $_POST['gender'] : "";
+    $email = isset($_POST['email']) ? $_POST['email'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
+    $data = createMMAccount($full_name,$dob,$gender,$email,$password,$phone);
+    break;
+    case 'getAllMMAccount':
+    $data = getAllMMAccount();
+    break;
+    case 'editMMAccount':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $full_name = isset($_POST['fullName']) ? $_POST['fullName'] : "";
+    $dob = isset($_POST['dob']) ? $_POST['dob'] : "";
+    $gender = isset($_POST['gender']) ? $_POST['gender'] : "";
+    $currentEmail = isset($_POST['currentEmail']) ? $_POST['currentEmail'] : "";
+    $newEmail = isset($_POST['newEmail']) ? $_POST['newEmail'] : "";
+    $currentPassword = isset($_POST['currentPassword']) ? $_POST['currentPassword'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
+    $data = editMMAccount($uid,$full_name,$dob,$gender,$currentEmail,$newEmail,$currentPassword,$password,$phone);
+    break;
+    case 'deteleMMRole':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = deteleMMRole($uid);
+    break;
+    case 'getAllOldMMAccount':
+    $data = getAllOldMMAccount();
+    break;
+    case 'remakeMMRole':
+    $cuid = isset($_POST['cuid']) ? $_POST['cuid'] : "";
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = remakeMMRole($uid,$cuid);
+    break;
+    case 'createMCAccount':
+    $full_name = isset($_POST['fullName']) ? $_POST['fullName'] : "";
+    $dob = isset($_POST['dob']) ? $_POST['dob'] : "";
+    $gender = isset($_POST['gender']) ? $_POST['gender'] : "";
+    $email = isset($_POST['email']) ? $_POST['email'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
+    $facultiesName = isset($_POST['facultiesName']) ? $_POST['facultiesName'] : "";
+    $data = createMCAccount($full_name,$dob,$gender,$email,$password,$phone,$facultiesName);
+    break;
+    case 'getAllMCAccount':
+    $data = getAllMCAccount();
+    break;
+    case 'editMCAccount':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $full_name = isset($_POST['fullName']) ? $_POST['fullName'] : "";
+    $dob = isset($_POST['dob']) ? $_POST['dob'] : "";
+    $gender = isset($_POST['gender']) ? $_POST['gender'] : "";
+    $currentEmail = isset($_POST['currentEmail']) ? $_POST['currentEmail'] : "";
+    $newEmail = isset($_POST['newEmail']) ? $_POST['newEmail'] : "";
+    $currentPassword = isset($_POST['currentPassword']) ? $_POST['currentPassword'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : "";
+    $newFacultiesName = isset($_POST['newFacultiesName']) ? $_POST['newFacultiesName'] : "";
+    $data = editMCAccount($uid,$full_name,$dob,$gender,$currentEmail,$newEmail,$currentPassword,$password,$phone,$newFacultiesName);
+    break;
+    case 'deteleMCRole':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = deteleMCRole($uid);
+    break;
+    case 'getAllOldMCAccount':
+    $data = getAllOldMCAccount();
+    break;
+    case 'remakeMCRole':
+    $cuid = isset($_POST['cuid']) ? $_POST['cuid'] : "";
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $facultiesName = isset($_POST['facultiesName']) ? $_POST['facultiesName'] : "";
+    $data = remakeMCRole($uid,$cuid,$facultiesName);
+    break;
+    case 'createGuestAccount':
+    $email = isset($_POST['email']) ? $_POST['email'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $facultiesName = isset($_POST['facultiesName']) ? $_POST['facultiesName'] : "";
+    $data = createGuestAccount($email,$password,$facultiesName);
+    break;
+    case 'getAllGuestAccount':
+    $data = getAllGuestAccount();
+    break;
+    case 'editGuestAccount':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $currentEmail = isset($_POST['currentEmail']) ? $_POST['currentEmail'] : "";
+    $newEmail = isset($_POST['newEmail']) ? $_POST['newEmail'] : "";
+    $password = isset($_POST['password']) ? $_POST['password'] : "";
+    $facultiesName = isset($_POST['facultiesName']) ? $_POST['facultiesName'] : "";
+    $data = editGuestAccount($uid,$currentEmail,$newEmail,$password,$facultiesName);
+    break;
+    case 'deleteGuestAccount':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = deleteGuestAccount($uid);
     break;
     case 'checkLogin':
     $email = isset($_POST['email']) ? $_POST['email'] : "";

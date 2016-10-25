@@ -2,6 +2,7 @@ module.controller('adminStudentController', function($scope, $rootScope, $timeou
     angular.element(document).ready(function() {
         $scope.getAllStudent();
         $scope.getAllFalcuties();
+        // $scope.filters = { };
     });
     $scope.getAllFalcuties = function() {
         var data = 'callType=getAllFalcuties&';
@@ -15,8 +16,7 @@ module.controller('adminStudentController', function($scope, $rootScope, $timeou
         });
     };
     $scope.createStudent = function() {
-        var data = 'callType=createStudentAccount&fullName='+$scope.fullNameCreate+'&dob='+$scope.dob+'&gender='+$scope.gender+'&password='+$scope.password+'&phone='+$scope.phone+'&email='+$scope.email+'m&falcutiesName='+$scope.selectedFalcities;
-        console.log(data);
+        var data = 'callType=createStudentAccount&fullName='+$scope.fullNameCreate+'&dob='+$scope.dob+'&gender='+$scope.gender+'&password='+$scope.password+'&phone='+$scope.phone+'&email='+$scope.email+'&falcutiesName='+$scope.selectedFalcities;
         service.makeRequest(data).then(function(response) {
             $scope.returnData = response.data;
             if ($scope.returnData.status == 1) {
@@ -39,8 +39,7 @@ module.controller('adminStudentController', function($scope, $rootScope, $timeou
         });
     };
     $scope.editStudent = function() {
-      var data = 'callType=editStudentAccount&uid='+$scope.uid+'&fullName='+$scope.fullNameEdit+'&dob='+$scope.dobEdit+'&gender='+$scope.genderEdit+'&password='+$scope.passwordEdit+'&phone='+$scope.phoneEdit+'&currentEmail='+$scope.currentEmail+'&newEmail='+$scope.emailEdit+'&falcutiesName='+$scope.selectedFalcitiesEdit;
-      console.log(data);
+      var data = 'callType=editStudentAccount&uid='+$scope.uid+'&fullName='+$scope.fullNameEdit+'&dob='+$scope.dobEdit+'&gender='+$scope.genderEdit+'&currentPassword='+$scope.currentPassword+'&password='+$scope.passwordEdit+'&phone='+$scope.phoneEdit+'&currentEmail='+$scope.currentEmail+'&newEmail='+$scope.emailEdit+'&falcutiesName='+$scope.selectedFalcitiesEdit;
       service.makeRequest(data).then(function(response) {
           $scope.returnData = response.data;
           if ($scope.returnData.status == 1) {
@@ -50,6 +49,23 @@ module.controller('adminStudentController', function($scope, $rootScope, $timeou
               alert($scope.returnData.msg);
           }
       });
+    };
+    $scope.deleteStudentAccount = function(index) {
+      var data = 'callType=deleteStudentAccount&uid='+$scope.sStudent[index].uid;
+      service.makeRequest(data).then(function(response) {
+          $scope.returnData = response.data;
+          if ($scope.returnData.status == 1) {
+              alert($scope.returnData.msg);
+              $scope.getAllStudent();
+          } else {
+              alert($scope.returnData.msg);
+          }
+      });
+    };
+    $scope.fillterStudent = function() {
+      if ($scope.selectedFalcitiesFillter=="All") {
+        $scope.selectedFalcitiesFillter = "";
+      }
     };
     $scope.reset = function() {
         $scope.fullNameCreate = "";
@@ -72,26 +88,11 @@ module.controller('adminStudentController', function($scope, $rootScope, $timeou
         $scope.phoneEdit = $scope.sStudent[index].phone;
         $scope.selectedFalcitiesEdit = $scope.sStudent[index].falcuties_name;
         $scope.currentEmail = $scope.sStudent[index].email;
+        $scope.currentPassword = $scope.sStudent[index].password;
     };
     $scope.showCreate = function() {
       $('.abc2').hide();
       $('.abc1').show();
       $scope.reset();
-    };
-    $scope.edit = function() {
-      if ($scope.selectedYear!=$scope.editYear) {
-        var data = 'callType=editStudent&year='+$scope.selectedYear+'&newYear='+$scope.editYear;
-        service.makeRequest(data).then(function(response) {
-            $scope.returnData = response.data;
-            if ($scope.returnData.status == 1) {
-                alert($scope.returnData.msg);
-                $scope.getAllStudent();
-            } else {
-                alert($scope.returnData.msg);
-            }
-        });
-      }else {
-        alert('no change!');
-      }
     };
 });
