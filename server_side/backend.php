@@ -1,5 +1,6 @@
 <?php
 include 'DBconnection.php';
+include 'upload-mail.php';
 // Common API start
 ////////////////////////////////////////////////////////
 function deleteAccountFromTableByID($uid,$table){
@@ -64,6 +65,21 @@ function isNotExist($value,$col,$table)
   }
 }
 
+function isNotExistMagazine($value)
+{
+  global $conn;
+  $year = date("Y");
+  $query = "SELECT magazine.magazine_name, academyyear.year FROM magazine INNER JOIN magazine_academy ON magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE magazine.magazine_name = '$value' AND academyyear.year = '$year'";
+  $check= mysqli_num_rows(mysqli_query($conn,$query));
+  if ($check==0) {
+    return true;
+    @mysqli_close($conn);
+  }else {
+    return false;
+    @mysqli_close($conn);
+  }
+}
+
 function isNotExistMM()
 {
   global $conn;
@@ -107,12 +123,8 @@ function checkLogin($email,$password)
     $row=mysqli_fetch_assoc($result);
     $role = $row['role_name'];
     $userName = $row['full_name'];
-    if ($role == 'MC') {
-      // $falculties = getFalcutiesByEmail($email);
-      $returnData = array("status" => 1, "msg" => "Login success!", "role" => $role, "fullName" => $userName);
-    }else {
-      $returnData = array("status" => 1, "msg" => "Login success!", "role" => $role, "fullName" => $userName);
-    }
+    $uid = $row['uid'];
+    $returnData = array("status" => 1, "msg" => "Login success!", "role" => $role, "fullName" => $userName, "uid" => $uid);
   }else {
     $returnData = array("status" => 0, "msg" => "Login false, check your email or password!");
   }
@@ -185,7 +197,7 @@ function addFalcutiesForStudent($email,$falcutiesName){
 function getAllStudent()
 {
   global $conn;
-  $query = "SELECT user.uid, user.full_name, user.dob, user.gender, user.email, user.password, user.phone, faculties.falcuties_name FROM user INNER JOIN students_faculties on user.uid = students_faculties.uid INNER JOIN faculties ON students_faculties.fid = faculties.fid ORDER BY faculties.falcuties_name";
+  $query = "SELECT user.uid, user.full_name, DATE_FORMAT(user.dob,'%d/%m/%Y') AS dob, user.gender, user.email, user.password, user.phone, faculties.falcuties_name FROM user INNER JOIN students_faculties on user.uid = students_faculties.uid INNER JOIN faculties ON students_faculties.fid = faculties.fid ORDER BY faculties.falcuties_name";
   $q=mysqli_query($conn,$query);
   $lenght = mysqli_num_rows($q);
   if ($lenght!=0) {
@@ -1019,5 +1031,293 @@ function deleteFalcuties($falcutiesName)
   return $returnData;
 }
 // Falculties API end
+////////////////////////////////////////////////////////
+
+// Magazine API start
+////////////////////////////////////////////////////////
+function getCurrentMagazine()
+{
+  global $conn;
+  $year = date("Y");
+  $query = "SELECT magazine.mid, magazine.magazine_name, magazine.start_date, magazine.end_date, academyyear.year, academyyear.aid FROM magazine INNER JOIN magazine_academy ON magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE academyyear.year = '$year'";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No active academy year!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function createMagazine($magazine_name,$start_date,$end_date)
+{
+  global $conn;
+  $year = date("Y");
+  if (isNotExistMagazine($magazine_name)) {
+    $query = "INSERT INTO `magazine`(`magazine_name`, `start_date`, `end_date`) VALUES ('$magazine_name',STR_TO_DATE('$start_date', '%d/%m/%Y'),STR_TO_DATE('$end_date', '%d/%m/%Y'))";
+    $qur = mysqli_query($conn,$query);
+    $id = mysqli_insert_id($conn);
+    if($qur){
+      $returnData = addAcademyYearForMagazine($id,$year);
+    }else{
+      $returnData = array("status" => 0, "msg" => "Error create magazine!");
+    }
+  }else {
+    $returnData = array("status" => 0, "msg" => "This Magazine on year ".$year." existed!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function addAcademyYearForMagazine($mid,$year)
+{
+  global $conn;
+  $aid = getAid($year);
+  if (isNotExist($aid,'aid','magazine_academy')) {
+    $query = "INSERT INTO `magazine_academy`(`mid`, `aid`) VALUES ($mid,$aid)";
+    $qur = mysqli_query($conn,$query);
+    if($qur){
+      $returnData = array("status" => 1, "msg" => "New magazine created!");
+    }else{
+      revertMagazine($mid);
+      $returnData = array("status" => 0, "msg" => "Error add academy year for magazine!");
+    }
+  }else {
+    revertMagazine($mid);
+    $returnData = array("status" => 0, "msg" => "Academy year ".$year." already has magazine!");
+  }
+  return $returnData;
+}
+function getAllMagazine()
+{
+  global $conn;
+  $query = "SELECT magazine.mid, magazine.magazine_name, DATE_FORMAT(magazine.start_date,'%d/%m/%Y') AS start_date, DATE_FORMAT(magazine.end_date,'%d/%m/%Y') AS end_date, academyyear.year, academyyear.aid FROM magazine INNER JOIN magazine_academy ON magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No magazine data!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function editMagazine($mid,$new_magazine_name,$start_date,$end_date)
+{
+  global $conn;
+  if (isExist($mid,'mid','magazine')) {
+    $query = "UPDATE `magazine` SET `magazine_name`='$new_magazine_name',`start_date`= STR_TO_DATE('$start_date', '%d/%m/%Y'),`end_date`= STR_TO_DATE('$end_date', '%d/%m/%Y') WHERE mid = $mid";
+    $qur = mysqli_query($conn,$query);
+    if($qur){
+      $returnData = array("status" => 1, "msg" => "Magazine edited!");
+    }else{
+      $returnData = array("status" => 0, "msg" => "Error edit magazine!");
+    }
+  }else {
+    $returnData = array("status" => 0, "msg" => "This magazine not exist!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function deleteMagazine($mid)
+{
+  # code...
+}
+function getMid($magazine_name,$year)
+{
+  global $conn;
+  $query = "SELECT magazine.mid FROM `magazine` INNER JOIN magazine_academy ON magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE magazine_name = '$magazine_name' AND academyyear.year = '$year'";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['mid'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getCurrentMid()
+{
+  global $conn;
+  $year = date("Y");
+  $query = "SELECT magazine.mid FROM `magazine` INNER JOIN magazine_academy ON magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE academyyear.year = '$year'";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['mid'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getAid($year)
+{
+  global $conn;
+  $query = "SELECT `aid` FROM `academyyear` WHERE year = '$year'";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['aid'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function revertMagazine($mid)
+{
+  global $conn;
+  $query = "DELETE FROM `magazine` WHERE mid = $mid";
+  $result=mysqli_query($conn,$query);
+  @mysqli_close($conn);
+}
+// Magazine API end
+////////////////////////////////////////////////////////
+
+// Article API start
+////////////////////////////////////////////////////////
+function createArticle($uid,$title, $description, $imgDir, $docDir)
+{
+  global $conn;
+  $date_submit = date("d/m/Y");
+  $status = "uploaded";
+  $query = "INSERT INTO `article`(`title`, `description`, `file_source`, `img_source`, `date_submit`, `STATUS`) VALUES ('$title','$description','$docDir','$imgDir', STR_TO_DATE('$date_submit', '%d/%m/%Y'),'$status')";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $atid = mysqli_insert_id($conn);
+    $returnData = addStudentUploadArticle($atid,$uid);
+  }else{
+    $returnData = array("status" => 0, "msg" => "Error create article!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function addStudentUploadArticle($atid,$uid)
+{
+  global $conn;
+  $query = "INSERT INTO `article_student`(`atid`, `uid`) VALUES ($atid,$uid)";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $mid = getCurrentMid();
+    $returnData = addMagazineOfArticle($atid,$mid,$uid);
+  }else{
+    revertArticle($atid);
+    $returnData = array("status" => 0, "msg" => "Error add student upload article!");
+  }
+  return $returnData;
+}
+function addMagazineOfArticle($atid,$mid,$uid)
+{
+  global $conn;
+  $query = "INSERT INTO `article_magazine`(`atid`, `mid`) VALUES ($atid,$mid)";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $studentName = getFullnameById($uid);
+    $articleTitle = getArticleTitleById($atid);
+    $magazinename = getMagazineNameById($mid);
+    $mcName = getMcNameById($uid);
+    $toEmail = getMcEmailByStudentId($uid);
+    sendMailToMC($mcName,$studentName,$articleTitle,$magazinename,$toEmail);
+    $returnData = array("status" => 1, "msg" => "Created new article!");
+  }else{
+    revertStudentArticle($atid,$uid);
+    revertArticle($atid);
+    $returnData = array("status" => 0, "msg" => "Error add magazine for article!");
+  }
+  return $returnData;
+}
+function getFullnameById($uid)
+{
+  global $conn;
+  $query = "SELECT `full_name` FROM `user` WHERE uid = $uid";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['full_name'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getArticleTitleById($atid)
+{
+  global $conn;
+  $query = "SELECT `title` FROM `article` WHERE atid = $atid";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['title'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getMagazineNameById($mid)
+{
+  global $conn;
+  $query = "SELECT `magazine_name` FROM `magazine` WHERE mid = $mid";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['magazine_name'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getMcNameById($uid)
+{
+  global $conn;
+  $query = "SELECT user.full_name FROM user INNER JOIN user_role ON user.uid = user_role.uid INNER JOIN mc_faculties ON user.uid = mc_faculties.uid INNER JOIN faculties ON mc_faculties.fid = faculties.fid WHERE faculties.falcuties_name IN (SELECT faculties.falcuties_name FROM faculties INNER JOIN students_faculties ON faculties.fid = students_faculties.fid WHERE students_faculties.uid = $uid) AND user_role.rid = 3";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['full_name'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getMcEmailByStudentId($uid)
+{
+  global $conn;
+  $query = "SELECT user.email FROM user INNER JOIN user_role ON user.uid = user_role.uid INNER JOIN mc_faculties ON user.uid = mc_faculties.uid INNER JOIN faculties ON mc_faculties.fid = faculties.fid WHERE faculties.falcuties_name IN (SELECT faculties.falcuties_name FROM faculties INNER JOIN students_faculties ON faculties.fid = students_faculties.fid WHERE students_faculties.uid = $uid) AND user_role.rid = 3";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['email'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function revertArticle($atid)
+{
+  global $conn;
+  $query = "DELETE FROM `article` WHERE atid = $atid";
+  $result=mysqli_query($conn,$query);
+  @mysqli_close($conn);
+}
+function revertStudentArticle($atid,$uid)
+{
+  global $conn;
+  $query = "DELETE FROM `article_student` WHERE atid = $atid AND uid = $uid";
+  $result=mysqli_query($conn,$query);
+  @mysqli_close($conn);
+}
+function getAllArticle()
+{
+  global $conn;
+  $query = "";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No article data!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function getArticleByUser($uid)
+{
+  # code...
+}
+function editArticle()
+{
+  # code...
+}
+function deleteArticle($atid)
+{
+  # code...
+}
+// Article API end
 ////////////////////////////////////////////////////////
 ?>

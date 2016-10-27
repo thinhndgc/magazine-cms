@@ -192,6 +192,45 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $falcutiesName = isset($_POST['falcutiesName']) ? $_POST['falcutiesName'] : "";
     $data = deleteFalcuties($falcutiesName);
     break;
+    case 'createMagazine':
+    $magazine_name = isset($_POST['magazine_name']) ? $_POST['magazine_name'] : "";
+    $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : "";
+    $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : "";
+    $data = createMagazine($magazine_name,$start_date,$end_date);
+    break;
+    case 'getAllMagazine':
+    $data = getAllMagazine();
+    break;
+    case 'getCurrentMagazine':
+    $data = getCurrentMagazine();
+    break;
+    case 'editMagazine':
+    $mid = isset($_POST['mid']) ? $_POST['mid'] : "";
+    $new_magazine_name = isset($_POST['new_magazine_name']) ? $_POST['new_magazine_name'] : "";
+    $start_date = isset($_POST['start_date']) ? $_POST['start_date'] : "";
+    $end_date = isset($_POST['end_date']) ? $_POST['end_date'] : "";
+    $data = editMagazine($mid,$new_magazine_name,$start_date,$end_date);
+    break;
+    case 'createArticle':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $title = isset($_POST['title']) ? $_POST['title'] : "";
+    $description = isset($_POST['description']) ? $_POST['description'] : "";
+    $imgDir = isset($_POST['imgDir']) ? $_POST['imgDir'] : "";
+    $docDir = isset($_POST['docDir']) ? $_POST['docDir'] : "";
+    $data = createArticle($uid,$title, $description, $imgDir, $docDir);
+    break;
+    case 'getAllArticle':
+    break;
+    case 'getArticleByUser':
+    break;
+    case 'editArticle':
+    break;
+    case 'delteArticle':
+    break;
+    case 'submitArticle':
+    break;
+    case 'approveArticle':
+    break;
     default:
     $data = array("status" => 0, "msg" => "No match function for API call");
     break;

@@ -3,7 +3,7 @@
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
-<html ng-app="magazine_cms" ng-csp ng-controller="adminController">
+<html ng-app="magazine_cms" ng-csp ng-controller="MMController" data-ng-init="authen()">
 
 <head>
   <meta charset="utf-8">
@@ -13,7 +13,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <script src="lib/angular/angular.min.js"></script>
   <script src="js/module.js"></script>
   <script src="controller/service.js"></script>
-  <script src="controller/adminController.js"></script>
+  <script src="controller/MMController.js"></script>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -31,12 +31,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
+  folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
   <style>
-    .abc2 {
-      display:none;
-    }
+  .abc2 {
+    display:none;
+  }
   </style>
 </head>
 
@@ -69,15 +69,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- The user image in the navbar-->
                 <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs">Alexander Pierce</span>
+                <span class="hidden-xs" id="fullName"></span>
               </a>
               <ul class="dropdown-menu">
                 <!-- The user image in the menu -->
                 <li class="user-header">
                   <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
-                  <p>
-                    Alexander Pierce - Marketing Manager
+                  <p ng-model="fullNameWithRole">
                   </p>
                 </li>
                 <!-- Menu Body -->
@@ -110,20 +109,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
           </div>
           <div class="pull-left info">
-            <p>Alexander Pierce</p>
+            <p id="fullNameWithRole"></p>
             <!-- Status -->
-            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            <a href="#" id="role"><i class="fa fa-circle text-success"></i></a>
           </div>
         </div>
+
 
         <!-- search form (Optional) -->
         <form action="#" method="get" class="sidebar-form">
           <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Search...">
             <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
+              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+              </button>
+            </span>
           </div>
         </form>
         <!-- /.search form -->
@@ -152,10 +152,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
       <section class="content-header">
-          <h1>
+        <h1>
           View All Magazines
           <small>View All Magazines</small>
-          </h1>
+        </h1>
       </section>
 
       <!-- Main content -->
@@ -175,22 +175,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- text input -->
                   <div class="form-group">
                     <label>Magazine Name</label>
-                    <input type="text" class="form-control" placeholder="Magazine Name">
+                    <input type="text" class="form-control" placeholder="Magazine Name" ng-model="magazineName">
                   </div>
                   <div class="form-group">
                     <label>Start Date</label>
-                    <input type="text" class="form-control" placeholder="DD/MM/YYYY">
+                    <input type="text" class="form-control" placeholder="DD/MM/YYYY" ng-model="startDate">
                   </div>
                   <div class="form-group">
                     <label>End Date</label>
-                    <input type="text" class="form-control" placeholder="DD/MM/YYYY">
+                    <input type="text" class="form-control" placeholder="DD/MM/YYYY" ng-model="endDate">
+                  </div>
+                  <div class="form-group">
+                    <label>Academy Year</label>
+                    <input type="text" class="form-control" placeholder="Magazine Name" ng-model="currentAY" readonly="true">
                   </div>
                 </form>
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Create</button>
-                <button type="button" class="btn btn-primary btnBack">Reset</button>
+                <button type="submit" class="btn btn-primary" ng-click="createMagazine()">Create</button>
+                <button type="button" class="btn btn-primary btnBack" ng-click="reset()">Reset</button>
               </div>
             </div>
             <!-- /.box -->
@@ -207,60 +211,127 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <!-- text input -->
                   <div class="form-group">
                     <label>Magazine Name</label>
-                    <input type="text" class="form-control" placeholder="Magazine Name">
+                    <input type="text" class="form-control" placeholder="Magazine Name" ng-model="magazineNameEdit">
                   </div>
                   <div class="form-group">
                     <label>Start Date</label>
-                    <input type="text" class="form-control" placeholder="DD/MM/YYYY">
+                    <input type="text" class="form-control" placeholder="DD/MM/YYYY" ng-model="startDateEdit">
                   </div>
                   <div class="form-group">
                     <label>End Date</label>
-                    <input type="text" class="form-control" placeholder="DD/MM/YYYY">
+                    <input type="text" class="form-control" placeholder="DD/MM/YYYY" ng-model="endDateEdit">
+                  </div>
+                  <div class="form-group">
+                    <label>Academy Year</label>
+                    <input type="text" class="form-control" placeholder="Magazine Name" ng-model="currentAY" readonly="true">
                   </div>
                 </form>
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Edit</button>
-                <button type="button" class="btn btn-primary btnBack" onclick="showCreate()">Back</button>
+                <button type="submit" class="btn btn-primary" ng-click="editMagazine()">Edit</button>
+                <button type="button" class="btn btn-primary btnBack" ng-click="showCreate()">Back</button>
               </div>
             </div>
             <!-- /.box -->
           </div>
           <div class="col-md-9 col-sm-12 col-xs-12">
             <div class="box">
-              <div class="box-header">
-                <h3 class="box-title">View All Magazines</h3>
+              <div class="row">
+                <div class="col-md-5 col-sm-5 col-xs-5">
+                  <div class="box-header">
+                    <h3 class="box-title">Current academy year: {{currentAY}}</h3>
+                  </div>
+                </div>
+                <div class="col-md-7 col-sm-7 col-xs-7">
+                  <h4 class="box-title" style="margin-bottom:15px, width: 60%!important">View other academy year</h4>
+                  <select class="form-control" style="margin-bottom:15px; width: 50%!important" ng-model="currentAY" ng-change="fillterYear()">
+                    <option>Current</option>
+                    <option ng-repeat="a in sAY">{{a.year}}</option>
+                  </select>
+                </div>
               </div>
               <!-- /.box-header -->
-              <div class="box-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Magazine Name</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Computing</td>
-                      <td>22/2/2222</td>
-                      <td>23/2/2222</td>
-                      <td><a href="#" class="btn btn-default btnEdit" onclick="showEdit()" role="button" style="margin-right: 5px;">Edit</a><a href="mm-view-all-articles.html" class="btn btn-default" role="button">View</a></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Science</td>
-                      <td>24/3/3333</td>
-                      <td>25/3/3333</td>
-                      <td><a href="#" class="btn btn-default btnEdit" onclick="showEdit()" role="button" style="margin-right: 5px;">Edit</a><a href="mm-view-all-articles.html" class="btn btn-default" role="button">View</a></td>
-                    </tr>
-                  </tbody>
+              <div class="box-body table-responsive no-padding">
+                <table class="box-body table table-striped">
+                  <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Magazine name</th>
+                    <th>Academy Year</th>
+                    <th>Start date</th>
+                    <th>end Date</th>
+                    <th style="width: 30%">Action</th>
+                  </tr>
+                  <tr ng-repeat="s in sMA | filter : currentAY">
+                    <th scope="row">{{$index+1}}</th>
+                    <td>{{s.magazine_name}}</td>
+                    <td>{{s.year}}</td>
+                    <td>{{s.start_date}}</td>
+                    <td>{{s.end_date}}</td>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
+                    </td>
+                  </tr>
                 </table>
+              </div>
+              <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+          </div>
+          <div class="col-md-9 col-sm-12 col-xs-12">
+            <div class="box">
+              <div class="row">
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                  <div class="box-header">
+                    <h3 class="box-title">Year: {{currentAY}}</h3>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                  <h4 class="box-title" style="margin-bottom:15px, width: 60%!important">Faculties</h4>
+                  <select class="form-control" style="margin-bottom:15px;" ng-model="currentFal" ng-change="fillterFauclties()">
+                    <option>All</option>
+                    <option ng-repeat="f in aFalcuties">{{f.falcuties_name}}</option>
+                  </select>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                  <h4 class="box-title" style="margin-bottom:15px, width: 60%!important">Status</h4>
+                  <select class="form-control" style="margin-bottom:15px;" ng-model="currentStatus" ng-change="fillterStatus()">
+                    <option>All</option>
+                    <option>Submited</option>
+                    <option>Rejected</option>
+                    <option>Approved</option>
+                  </select>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                  <h4 class="box-title" style="margin-bottom:15px">Search</h4>
+                  <input type=text class="form-control" style="width:95%;margin-top: -5px;" ng-model="searchText" placeholder="Type something"/>
+                </div>
+              </div>
+              <!-- /.box-header -->
+              <div class="box-body table-responsive no-padding">
+                <table class="box-body table table-striped">
+                  <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Title</th>
+                    <th>Create by</th>
+                    <th>Submit by</th>
+                    <th>From faculties</th>
+                    <th>Status</th>
+                    <th style="width: 30%">Action</th>
+                  </tr>
+                  <tr ng-repeat="s in sMA | filter : currentAY | filter : currentFal | filter : currentStatus | filter : searchText">
+                    <th scope="row">{{$index+1}}</th>
+                    <td>Test article</td>
+                    <td>Thinh Nguyen</td>
+                    <td>Mathew</td>
+                    <td>Software IT</td>
+                    <td>Approved</td>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="">View</a>
+                    </td>
+                  </tr>
+                </table>
+                <!-- <div class="col-md-12 col-sm-12 col-xs-12">
+                  <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=file/Project-details.xlsx" width="100%" height="100%"></iframe>
+                </div> -->
               </div>
               <!-- /.box-body -->
             </div>
@@ -317,11 +388,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li>
               <a href="javascript::;">
                 <h4 class="control-sidebar-subheading">
-                Custom Template Design
-                <span class="pull-right-container">
-                  <span class="label label-danger pull-right">70%</span>
-                </span>
-              </h4>
+                  Custom Template Design
+                  <span class="pull-right-container">
+                    <span class="label label-danger pull-right">70%</span>
+                  </span>
+                </h4>
 
                 <div class="progress progress-xxs">
                   <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
@@ -359,7 +430,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </aside>
     <!-- /.control-sidebar -->
     <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
+    immediately after the control sidebar -->
     <div class="control-sidebar-bg"></div>
   </div>
   <!-- ./wrapper -->
@@ -383,26 +454,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- AdminLTE for demo purposes -->
   <script src="dist/js/demo.js"></script>
   <!-- page script -->
-  <script>
-    $(function() {
-      $("#example1").DataTable();
-    });
 
-    function showEdit() {
-      $('.abc1').hide();
-      $('.abc2').show();
-    }
-
-    function showCreate() {
-      $('.abc2').hide();
-      $('.abc1').show();
-    }
-  </script>
 
   <!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
+  Both of these plugins are recommended to enhance the
+  user experience. Slimscroll is required when using the
+  fixed layout. -->
 </body>
 
 </html>

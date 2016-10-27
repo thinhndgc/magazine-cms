@@ -166,7 +166,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </div>
             <div class="box-body no-padding">
               <ul class="nav nav-pills nav-stacked">
-                <li><a href="#"><i class="fa fa-inbox"></i>Magazine</a></li>
+                <li><a href="#"><i class="fa fa-newspaper-o"></i>{{currentMagazine}}</a></li>
               </ul>
             </div>
             <!-- /.box-body -->
@@ -174,7 +174,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- /. box -->
         </div>
         <!-- /.col -->
-        <div class="col-md-9">
+        <div class="col-md-9" >
           <form name="article" method="post" enctype="multipart/form-data">
           <div class="box box-primary">
             <div class="box-header with-border">
@@ -184,13 +184,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="box-body">
               <div class="form-group">
               </div>
-              <input class="form-control" name="title" placeholder="Title:" ng-model="title" required>
+              <input class="form-control" name="title" placeholder="Title:" ng-model="title" required ng-disabled="!isExistMagazine">
               <p ng-if="!article.title.$valid" class="text-red" style="margin-top: 15px;">
                 Title are require!
               </p>
             </div>
             <div class="form-group">
-              <textarea name="description" class="form-control" style="height: 300px" ng-model="description" required>
+              <textarea name="description" class="form-control" style="height: 300px" ng-model="description" required ng-disabled="!isExistMagazine">
               </textarea>
               <p ng-if="!article.description.$valid" class="text-red" style="margin-left: 10px;margin-top: 15px;">
                 Description are require!
@@ -199,7 +199,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="form-group">
               <div class="btn btn-default btn-file" style="margin-left: 10px;">
                 <i class="fa fa-paperclip"></i> Upload Photo
-                <input id="pictureFile" type="file" name="file" onchange="angular.element(this).scope().uploadImage()"/>
+                <input id="pictureFile" type="file" name="file" onchange="angular.element(this).scope().uploadImage()" ng-disabled="!isExistMagazine"/>
               </div>
               <p id="img_mess" class="text-green" style="margin-left: 10px;margin-top: 10px;">
                 {{img_msg}}
@@ -209,7 +209,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
               <div class="btn btn-default btn-file" style="margin-left: 10px">
                 <i class="fa fa-file-word-o" aria-hidden="true"></i> Upload Document
-                <input id="docFile" type="file" name="file" onchange="angular.element(this).scope().uploadDoc()"/>
+                <input id="docFile" type="file" name="file" onchange="angular.element(this).scope().uploadDoc()" ng-disabled="!isExistMagazine"/>
               </div>
             </div>
             <p id="img_document" class="text-green" style="margin-left: 10px;margin-top: 10px;padding-bottom: 10px;">
@@ -220,7 +220,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- /.box-body -->
           <div class="box-footer">
             <div class="pull-right">
-              <button type="button" ng-disabled="!article.description.$valid || !article.title.$valid || !isUploadDoc" class="btn btn-primary" ng-click="uploadArticle()"><i class="fa fa-upload" ></i> Upload</button>
+              <button type="button" ng-disabled="!article.description.$valid || !article.title.$valid || !isUploadDoc || !isExistMagazine" class="btn btn-primary" ng-click="uploadArticle()"><i class="fa fa-upload" ></i>{{btnUpload}}</button>
             </div>
             <button type="reset" class="btn btn-default"><i class="fa fa-times"></i> Reset</button>
           </div>

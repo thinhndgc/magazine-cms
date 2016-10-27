@@ -6,11 +6,12 @@ module.controller('studentController', function($scope, $rootScope, $timeout, $h
     console.log('authen');
     service.authen('Student');
     $scope.setUserInfor();
+    $scope.getCurrentMagazine();
     $scope.isUploadDoc = false;
+    $scope.btnUpload = ' Upload';
     $('#img_document').removeClass('text-green');
     $('#img_document').addClass('text-red');
     $scope.doc_msg = 'Document are require';
-
   };
   $scope.logout = function() {
     service.clearLoginData();
@@ -23,6 +24,49 @@ module.controller('studentController', function($scope, $rootScope, $timeout, $h
     $('#fullName').text($scope.fullName);
     $('#fullNameWithRole').text($scope.fullNameWithRole);
     $('#role').text($scope.role);
+  };
+  $scope.getCurrentMagazine = function() {
+    var data = 'callType=getCurrentMagazine&';
+    service.makeRequest(data).then(function(response) {
+      $scope.returnData = response.data;
+      if ($scope.returnData.status == 1) {
+        // console.log($scope.returnData.data);
+        if ($scope.validMagazineDay($scope.returnData.data[0].start_date,$scope.returnData.data[0].end_date)) {
+          $scope.currentMagazine = $scope.returnData.data[0].magazine_name;
+          $scope.isExistMagazine = true;
+        }else {
+          $scope.currentMagazine = $scope.returnData.data[0].magazine_name+' (submit expired)';
+          $scope.isExistMagazine = false;
+        }
+      } else {
+        $scope.currentMagazine = 'No active Magazine';
+        $scope.isExistMagazine = false;
+        alert($scope.returnData.msg);
+      }
+    });
+  };
+  $scope.validMagazineDay = function(start_date, end_date) {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth();
+    var yyyy = today.getFullYear();
+    if(dd<10){
+      dd='0'+dd;
+    }
+    var currentDate = new Date(yyyy, mm, dd);
+    var startDateArr =  start_date.split('-');
+    var m = startDateArr[1]-1;
+    var startDate = new Date(startDateArr[0],m,startDateArr[2]);
+    var enddateArr = end_date.split('-');
+    var m2 = enddateArr[1]-1;
+    var endDate = new Date(enddateArr[0],m2,enddateArr[2]);
+    if (startDate > currentDate) {
+      return false;
+    }else if (currentDate > endDate) {
+      return false;
+    }else {
+      return true;
+    }
   };
   $scope.uploadImage = function() {
     var file_data = $('#pictureFile')[0].files[0];
@@ -90,11 +134,21 @@ module.controller('studentController', function($scope, $rootScope, $timeout, $h
     });
   };
   $scope.uploadArticle = function(){
-    console.log('ok'+$scope.imgDir+'-'+$scope.docDir+'-'+$scope.title+'-'+$scope.description);
-  };
-  $scope.validate = function(){
-    // if ($scope.title === null || $scope.description===null|| $scope.isUploadDoc === false) {
-    //
-    // }
+    var uid = localStorage.getItem('uid');
+    var data = 'callType=createArticle&uid='+uid+'&title='+$scope.title+'&description='+$scope.description+'&imgDir='+$scope.imgDir+'&docDir='+$scope.docDir;
+    $scope.btnUpload = 'Uploading....';
+    $scope.isExistMagazine = false;
+    service.makeRequest(data).then(function(response) {
+      $scope.returnData = response.data;
+      if ($scope.returnData.status == 1) {
+        $scope.btnUpload = 'Upload';
+        $scope.isExistMagazine = true;
+        alert($scope.returnData.msg);
+      } else {
+        $scope.btnUpload = 'Upload';
+        $scope.isExistMagazine = true;
+        alert($scope.returnData.msg);
+      }
+    });
   };
 });

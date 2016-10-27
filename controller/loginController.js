@@ -20,8 +20,8 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
     var data = 'callType=checkLogin&email='+$scope.email+'&password='+$scope.password;
     service.makeRequest(data).then(function(response){
       $scope.returnData = response.data;
-      console.log($scope.returnData);
       if ($scope.returnData.status == 1) {
+        localStorage.setItem('uid',$scope.returnData.uid);
         $scope.saveLoginInfor();
         $scope.router($scope.returnData);
       }else {
@@ -65,7 +65,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('isLogin',true);
       }
       localStorage.setItem('fullName',data.fullName);
-      location.replace("mm-index.html");
+      location.replace("mm-view-magazine.html");
       break;
       case 'MC':
       if ($('#remember-me').is(':checked')) {
@@ -78,7 +78,6 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('isLogin',true);
       }
       localStorage.setItem('fullName',data.fullName);
-      $rootScope.facultiesOfMC = data.faculties;
       location.replace("mc-index.html");
       break;
       case 'Student':
@@ -92,7 +91,6 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('isLogin',true);
       }
       localStorage.setItem('fullName',data.fullName);
-      $rootScope.facultiesOfStudent = data.faculties;
       location.replace("student-view-all-articles.html");
       break;
       case 'Guest':
@@ -106,7 +104,6 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('isLogin',true);
       }
       localStorage.setItem('fullName',data.fullName);
-      $rootScope.facultiesOfGuest = data.faculties;
       location.replace("guest.html");
       break;
       default:

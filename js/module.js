@@ -1,4 +1,4 @@
-var module = angular.module('magazine_cms', ['ngFileUpload']);
+var module = angular.module('magazine_cms', []);
 
 module.directive('fileModel', ['$parse', function ($parse) {
   return {
