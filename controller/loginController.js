@@ -78,7 +78,7 @@ module.controller('loginController', function($scope, $rootScope, $timeout, $htt
         sessionStorage.setItem('isLogin',true);
       }
       localStorage.setItem('fullName',data.fullName);
-      location.replace("mc-index.html");
+      location.replace("mc-view-all-articles.html");
       break;
       case 'Student':
       if ($('#remember-me').is(':checked')) {

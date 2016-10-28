@@ -5,3 +5,9 @@
 .btnCreate-wrapper {
   margin-bottom: 10px;
 }
+.full-width{
+  width: 100%!important;
+}
+.small-comment{
+  font-size: 12px;
+}

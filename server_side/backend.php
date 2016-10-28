@@ -1310,6 +1310,24 @@ function getArticleByUser($uid)
 {
   # code...
 }
+function getAllArticleByMcId($uid)
+{
+  global $conn;
+  $query = "SELECT user.uid, article.atid, user.full_name, article.title, article.description, article.file_source, article.img_source, DATE_FORMAT(article.date_submit,'%d/%m/%Y') AS date_submit, article.STATUS, faculties.falcuties_name, magazine.magazine_name, academyyear.year FROM user INNER JOIN students_faculties ON user.uid = students_faculties.uid INNER JOIN faculties ON students_faculties.fid = faculties.fid INNER JOIN article_student ON user.uid = article_student.uid INNER JOIN article ON article_student.atid = article.atid INNER JOIN article_magazine ON article.atid = article_magazine.atid INNER JOIN magazine ON article_magazine.mid = magazine.mid INNER JOIN magazine_academy ON article_magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE faculties.falcuties_name IN (SELECT faculties.falcuties_name FROM faculties INNER JOIN mc_faculties ON faculties.fid = mc_faculties.fid WHERE mc_faculties.uid = $uid)";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No article data!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
 function editArticle()
 {
   # code...
@@ -1317,6 +1335,38 @@ function editArticle()
 function deleteArticle($atid)
 {
   # code...
+}
+function comment($uid,$atid,$comment)
+{
+  global $conn;
+  $date_submit = date("d/m/Y");
+  $query = "INSERT INTO `comment`(`uid`, `atid`, `COMMENT`, `comment_date`) VALUES ($uid,$atid,'$comment',STR_TO_DATE('$date_submit', '%d/%m/%Y'))";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $returnData = array("status" => 1, "msg" => "Commented!");
+  }else{
+    $returnData = array("status" => 0, "msg" => "Error create comment!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function getAllCommentByArticleId($atid)
+{
+  global $conn;
+  $query = "SELECT comment.COMMENT, DATE_FORMAT(comment.comment_date,'%d/%m/%Y') AS comment_date, user.full_name FROM comment INNER JOIN user ON comment.uid = user.uid WHERE comment.atid = $atid";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No comment data!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
 }
 // Article API end
 ////////////////////////////////////////////////////////

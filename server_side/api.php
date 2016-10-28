@@ -221,7 +221,9 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     break;
     case 'getAllArticle':
     break;
-    case 'getArticleByUser':
+    case 'getAllArticleByMcId':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $data = getAllArticleByMcId($uid);
     break;
     case 'editArticle':
     break;
@@ -230,6 +232,16 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     case 'submitArticle':
     break;
     case 'approveArticle':
+    break;
+    case 'comment':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
+    $comment = isset($_POST['comment']) ? $_POST['comment'] : "";
+    $data = comment($uid,$atid,$comment);
+    break;
+    case 'getAllCommentByArticleId':
+    $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
+    $data = getAllCommentByArticleId($atid);
     break;
     default:
     $data = array("status" => 0, "msg" => "No match function for API call");
