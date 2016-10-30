@@ -328,8 +328,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <td>{{m.password}}</td>
                     <td>{{m.phone}}</td>
                     <td>{{m.falcuties_name}}</td>
-                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
-                      <a href="#" class="btn btn-default btnDelete" role="button" ng-click="deleteMCRole($index)">Remove permission</a>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit(sMC.indexOf(m))">Edit</a>
+                      <a href="#" class="btn btn-default btnDelete" role="button" ng-click="deleteMCRole(sMC.indexOf(m))">Remove permission</a>
                     </td>
                   </tr>
                 </table>
@@ -380,8 +380,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <td>{{o.password}}</td>
                     <td>{{o.phone}}</td>
                     <td>{{o.falcuties_name}}</td>
-                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEditRemake($index)">Edit</a>
-                      <a href="#" class="btn btn-default btnDelete" role="button" ng-click="remakeMCRole($index)">Remake permission</a>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEditRemake(oMC.indexOf(o))">Edit</a>
+                      <a href="#" class="btn btn-default btnDelete" role="button" ng-click="remakeMCRole(oMC.indexOf(o))">Remake permission</a>
                     </td>
                   </tr>
                 </table>

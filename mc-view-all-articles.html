@@ -193,11 +193,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <!-- modal -->
               <div class="modal" id="detailModal">
                 <div class="modal-dialog">
-                  <div class="modal-content">
+                  <div class="modal-content" ng-disabled="isSubmiting">
                     <div class="modal-header">
                       <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
                       <!-- <span aria-hidden="true">×</span></button> -->
                       <h4 class="modal-title">View detail of <b>{{seletedArticle.title}}</b></h4>
+                      <p style="color: red" ng-if="!isCanSubmit">
+                        Submit expired!
+                      </p>
                     </div>
                     <div class="modal-body">
                       <p>Upload by: <b>{{seletedArticle.full_name}}</b> on {{seletedArticle.date_submit}}</p>
@@ -223,20 +226,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <div class="row" ng-if="txtComment==null">
+                      <div class="row" ng-if="txtComment==null && !isSubmit">
                         <div class="col-xs-5">
                           <p style="float: left; color: red"><i class="fa fa-exclamation"> Comment can not null</i></p>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-xs-3">
-                          <input type="text" id"txtComment" ng-model="txtComment" class="form-control full-width " name="name" value="" placeholder="comment" required="">
+                          <input type="text" id"txtComment" ng-disabled="isSubmit" ng-model="txtComment" class="form-control full-width " name="name" value="" placeholder="comment" required="">
                         </div>
                         <div class="col-xs-3">
-                          <button type="button" class="btn btn-primary full-width" ng-click="placeComment()">Comment</button>
+                          <button type="button" ng-disabled="isSubmit" class="btn btn-primary full-width" ng-click="placeComment()">Comment</button>
                         </div>
                         <div class="col-xs-3">
-                          <button type="button" class="btn btn-success full-width" ng-click="submit()">Submit</button>
+                          <button type="button" ng-disabled="!isCanSubmit || isSubmit" class="btn btn-success full-width" ng-click="submit()">{{submitBtn}}</button>
                         </div>
                         <div class="col-xs-3">
                           <button type="button" class="btn btn-warning full-width" ng-click="closeView()">Close</button>
@@ -271,7 +274,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <td>{{m.STATUS}}</td>
                     <!-- <td>{{m.falcuties_name}}</td> -->
                     <td>
-                      <a href="#" class="btn btn-default btnEdit" role="button" ng-click="view($index)">View</a>
+                      <a href="#" class="btn btn-default btnEdit" role="button" ng-click="view(sArticle.indexOf(m))">View</a>
                     </td>
                   </tr>
                 </table>

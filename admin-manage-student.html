@@ -333,7 +333,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <td>{{s.password}}</td>
                   <td>{{s.phone}}</td>
                   <td>{{s.falcuties_name}}</td>
-                  <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
+                  <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit(sStudent.indexOf(s))">Edit</a>
                     <a href="#" class="btn btn-default btnDelete" role="button" ng-click="deleteStudentAccount($index)">Delete</a>
                   </td>
                 </tr>

@@ -1306,14 +1306,33 @@ function getAllArticle()
   @mysqli_close($conn);
   return $returnData;
 }
-function getArticleByUser($uid)
-{
-  # code...
-}
 function getAllArticleByMcId($uid)
 {
   global $conn;
   $query = "SELECT user.uid, article.atid, user.full_name, article.title, article.description, article.file_source, article.img_source, DATE_FORMAT(article.date_submit,'%d/%m/%Y') AS date_submit, article.STATUS, faculties.falcuties_name, magazine.magazine_name, academyyear.year FROM user INNER JOIN students_faculties ON user.uid = students_faculties.uid INNER JOIN faculties ON students_faculties.fid = faculties.fid INNER JOIN article_student ON user.uid = article_student.uid INNER JOIN article ON article_student.atid = article.atid INNER JOIN article_magazine ON article.atid = article_magazine.atid INNER JOIN magazine ON article_magazine.mid = magazine.mid INNER JOIN magazine_academy ON article_magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE faculties.falcuties_name IN (SELECT faculties.falcuties_name FROM faculties INNER JOIN mc_faculties ON faculties.fid = mc_faculties.fid WHERE mc_faculties.uid = $uid)";
+  $q=mysqli_query($conn,$query);
+  $lenght = mysqli_num_rows($q);
+  if ($lenght!=0) {
+    $data=array();
+    while ($row=mysqli_fetch_object($q)){
+      $data[]=$row;
+    }
+    $returnData = array("status" => 1, "data" => $data);
+  }else {
+    $returnData = array("status" => 0, "msg" => "No article data!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function getArticleByUser($uid)
+{
+  # code...
+}
+function getArticleForMM()
+{
+  global $conn;
+  // $query = "SELECT user.uid, article.atid, user.full_name, article.title, article.description, article.file_source, article.img_source, article.date_submit, article.STATUS, faculties.falcuties_name, magazine.magazine_name, academyyear.year FROM user INNER JOIN students_faculties ON user.uid = students_faculties.uid INNER JOIN faculties ON students_faculties.fid = faculties.fid INNER JOIN article_student ON user.uid = article_student.uid INNER JOIN article ON article_student.atid = article.atid INNER JOIN article_magazine ON article.atid = article_magazine.atid INNER JOIN magazine ON article_magazine.mid = magazine.mid INNER JOIN magazine_academy ON article_magazine.mid = magazine_academy.mid INNER JOIN academyyear ON magazine_academy.aid = academyyear.aid WHERE article.STATUS NOT IN ('uploaded')";
+  $query = "SELECT * FROM studentarticle LEFT JOIN mcarticle ON studentarticle.atid = mcarticle.atid";
   $q=mysqli_query($conn,$query);
   $lenght = mysqli_num_rows($q);
   if ($lenght!=0) {
@@ -1366,6 +1385,115 @@ function getAllCommentByArticleId($atid)
     $returnData = array("status" => 0, "msg" => "No comment data!");
   }
   @mysqli_close($conn);
+  return $returnData;
+}
+function submitArticleToMM($studentName,$stid,$mcid,$mcName,$atid,$articleTitle,$magazine)
+{
+  global $conn;
+  $status = 'submited';
+  $query = "INSERT INTO `mc_submit_article`(`uid`, `atid`) VALUES ($mcid,$atid)";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $returnData = changeArticleStatus($atid,$status);
+    if ($returnData['status']==1) {
+      $mmName = getCurrentMMName();
+      $mmEmail = getCurrentMMEmail();
+      $stEmail = getUserEmailById($stid);
+      sendMailToMM($mmName,$mcName,$articleTitle,$magazine,$mmEmail);
+      sendSubmitMailToStudent($mcName,$studentName,$articleTitle,$magazine,$stEmail);
+      $returnData = array("status" => 1, "msg" => "Submited!");
+    }else {
+      $returnData = array("status" => 0, "msg" => "Change article status error!");
+    }
+  }else{
+    $returnData = array("status" => 0, "msg" => "Submit article error!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function approveArticle($studentName,$stid,$mmid,$atid,$articleTitle,$magazine)
+{
+  global $conn;
+  $status = 'approved';
+  $query = "INSERT INTO `mm_approve_article`(`uid`, `atid`) VALUES ($mmid,$atid)";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $returnData = changeArticleStatus($atid,$status);
+    if ($returnData['status']==1) {
+      $mmName = getCurrentMMName();
+      $stEmail = getUserEmailById($stid);
+      sendApproveMailToStudent($mmName,$studentName,$articleTitle,$magazine,$stEmail);
+      $returnData = array("status" => 1, "msg" => "Approved!");
+    }else {
+      $returnData = array("status" => 0, "msg" => "Change article status error!");
+    }
+  }else{
+    $returnData = array("status" => 0, "msg" => "Approve article error!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function rejectArticle($studentName,$stid,$mmid,$atid,$articleTitle,$magazine)
+{
+  global $conn;
+  $status = 'rejected';
+  $query = "INSERT INTO `mm_reject_article`(`uid`, `atid`) VALUES ($mmid,$atid)";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $returnData = changeArticleStatus($atid,$status);
+    if ($returnData['status']==1) {
+      $mmName = getCurrentMMName();
+      $stEmail = getUserEmailById($stid);
+      sendRejectMailToStudent($mmName,$studentName,$articleTitle,$magazine,$toEmail);
+      $returnData = array("status" => 1, "msg" => "Rejected!");
+    }else {
+      $returnData = array("status" => 0, "msg" => "Change article status error!");
+    }
+  }else{
+    $returnData = array("status" => 0, "msg" => "Reject article error!");
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
+function changeArticleStatus($atid,$status)
+{
+  global $conn;
+  $query = "UPDATE `article` SET `STATUS` = '$status' WHERE atid = $atid";
+  $qur = mysqli_query($conn,$query);
+  if($qur){
+    $returnData = array("status" => 1, "msg" => "Article status changed!");
+  }else{
+    $returnData = array("status" => 0, "msg" => "Change article status error!");
+  }
+  return $returnData;
+}
+function getCurrentMMName()
+{
+  global $conn;
+  $query = "SELECT `full_name`, `email` FROM `user` INNER JOIN user_role ON user.uid = user_role.uid WHERE user_role.rid = 2";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['full_name'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getCurrentMMEmail()
+{
+  global $conn;
+  $query = "SELECT `full_name`, `email` FROM `user` INNER JOIN user_role ON user.uid = user_role.uid WHERE user_role.rid = 2";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['email'];
+  mysqli_free_result($result);
+  return $returnData;
+}
+function getUserEmailById($uid){
+  global $conn;
+  $query = "SELECT `email` FROM `user` WHERE uid = $uid";
+  $result=mysqli_query($conn,$query);
+  $row=mysqli_fetch_assoc($result);
+  $returnData = $row['email'];
+  mysqli_free_result($result);
   return $returnData;
 }
 // Article API end

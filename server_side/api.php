@@ -230,8 +230,35 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     case 'delteArticle':
     break;
     case 'submitArticle':
+    $studentName = isset($_POST['studentName']) ? $_POST['studentName'] : "";
+    $stid = isset($_POST['stid']) ? $_POST['stid'] : "";
+    $mcid = isset($_POST['mcid']) ? $_POST['mcid'] : "";
+    $mcName = isset($_POST['mcName']) ? $_POST['mcName'] : "";
+    $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
+    $articleTitle = isset($_POST['articleTitle']) ? $_POST['articleTitle'] : "";
+    $magazine = isset($_POST['magazine']) ? $_POST['magazine'] : "";
+    $data = submitArticleToMM($studentName,$stid,$mcid,$mcName,$atid,$articleTitle,$magazine);
+    break;
+    case 'getArticleForMM':
+    $data = getArticleForMM();
     break;
     case 'approveArticle':
+    $studentName = isset($_POST['studentName']) ? $_POST['studentName'] : "";
+    $stid = isset($_POST['stid']) ? $_POST['stid'] : "";
+    $mmid = isset($_POST['mmid']) ? $_POST['mmid'] : "";
+    $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
+    $articleTitle = isset($_POST['articleTitle']) ? $_POST['articleTitle'] : "";
+    $magazine = isset($_POST['magazine']) ? $_POST['magazine'] : "";
+    $data = approveArticle($studentName,$stid,$mmid,$atid,$articleTitle,$magazine);
+    break;
+    case 'rejectArticle':
+    $studentName = isset($_POST['studentName']) ? $_POST['studentName'] : "";
+    $stid = isset($_POST['stid']) ? $_POST['stid'] : "";
+    $mmid = isset($_POST['mmid']) ? $_POST['mmid'] : "";
+    $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
+    $articleTitle = isset($_POST['articleTitle']) ? $_POST['articleTitle'] : "";
+    $magazine = isset($_POST['magazine']) ? $_POST['magazine'] : "";
+    $data = rejectArticle($studentName,$stid,$mmid,$atid,$articleTitle,$magazine);
     break;
     case 'comment':
     $uid = isset($_POST['uid']) ? $_POST['uid'] : "";

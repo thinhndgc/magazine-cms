@@ -268,7 +268,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <td>{{s.year}}</td>
                     <td>{{s.start_date}}</td>
                     <td>{{s.end_date}}</td>
-                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit($index)">Edit</a>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="showEdit(sMA.indexOf(s))">Edit</a>
                     </td>
                   </tr>
                 </table>
@@ -306,6 +306,61 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <input type=text class="form-control" style="width:95%;margin-top: -5px;" ng-model="searchText" placeholder="Type something"/>
                 </div>
               </div>
+              <!-- modal -->
+              <div class="modal" id="detailModal">
+                <div class="modal-dialog">
+                  <div class="modal-content" ng-disabled="isSubmiting">
+                    <div class="modal-header">
+                      <h4 class="modal-title">View detail of <b>{{seletedArticle.title}}</b></h4>
+                      <p style="color: red" ng-if="!isCanApprove">
+                        Approve expired!
+                      </p>
+                    </div>
+                    <div class="modal-body">
+                      <p>Upload by: <b>{{seletedArticle.st_name}}</b> on {{seletedArticle.date_submit}}</p>
+                      <p>Submit by: <b>{{seletedArticle.mc_name}}</b></p>
+                      <p>Desciption: </p>
+                      <textarea name="description" class="form-control" readonly="true">{{seletedArticle.description}}</textarea>
+                      <div class="row">
+                        <div class="col-xs-4">
+                          <p>Image: </p>
+                          <img class="img-responsive pad" id="photo" src="" alt="Photo" width="150px">
+                        </div>
+                        <div class="col-xs-4">
+                          <p>Document: </p>
+                          <p style="color: blue"><span>{{seletedArticle.file_source}}</span></p>
+                          <a type="button" href="file/doc/{{seletedArticle.file_source}}" class="btn btn-app" style="margin: 0 0 0 0"><i class="fa fa-eye"></i>View</a>
+                        </div>
+                        <div class="col-xs-4">
+                          <p>Comment: </p>
+                          <!-- <ul> -->
+                          <p ng-if="!hasComment" style="color: red">No comment!</p>
+                          <p ng-repeat="c in comment">- {{c.COMMENT}} </br><i class="small-comment">by</i> <b>{{c.full_name}}</b> <i class="small-comment">on</i> {{c.comment_date}}</p>
+                          <!-- </ul> -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="row">
+                        <div class="col-xs-3">
+                        </div>
+                        <div class="col-xs-3">
+                          <button type="button" ng-disabled="!isCanReject || isProcessing" class="btn btn-danger full-width" ng-click="reject()">{{reJectBtn}}</button>
+                        </div>
+                        <div class="col-xs-3">
+                          <button type="button" ng-disabled="!isCanApprove || isProcessing" class="btn btn-success full-width" ng-click="approve()">{{approveBtn}}</button>
+                        </div>
+                        <div class="col-xs-3">
+                          <button type="button" class="btn btn-warning full-width" ng-click="closeView()">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+              </div>
+              <!-- modal end -->
               <!-- /.box-header -->
               <div class="box-body table-responsive no-padding">
                 <table class="box-body table table-striped">
@@ -316,16 +371,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <th>Submit by</th>
                     <th>From faculties</th>
                     <th>Status</th>
-                    <th style="width: 30%">Action</th>
+                    <th>Action</th>
                   </tr>
-                  <tr ng-repeat="s in sMA | filter : currentAY | filter : currentFal | filter : currentStatus | filter : searchText">
+                  <tr ng-repeat="s in sAT | filter : currentAY | filter : currentFal | filter : currentStatus | filter : searchText">
                     <th scope="row">{{$index+1}}</th>
-                    <td>Test article</td>
-                    <td>Thinh Nguyen</td>
-                    <td>Mathew</td>
-                    <td>Software IT</td>
-                    <td>Approved</td>
-                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="">View</a>
+                    <td>{{s.title}}</td>
+                    <td>{{s.st_name}}</td>
+                    <td>{{s.mc_name}}</td>
+                    <td>{{s.falcuties_name}}</td>
+                    <td>{{s.STATUS}}</td>
+                    <td><a href="#" class="btn btn-default btnEdit" role="button" ng-click="view(sAT.indexOf(s))">View</a>
                     </td>
                   </tr>
                 </table>

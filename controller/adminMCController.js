@@ -101,6 +101,13 @@ module.controller('adminMCController', function($scope, $rootScope, $timeout, $h
         $scope.selectedFalcitiesFillter = "";
       }
     };
+    $scope.fillterMC = function () {
+      console.log('start');
+      if ($scope.selectedFalcitiesFillter1 == 'All') {
+        console.log('here');
+        $scope.selectedFalcitiesFillter1 = "";
+      }
+    };
     $scope.reset = function() {
         $scope.fullNameCreate = "";
         $scope.dob = "";
