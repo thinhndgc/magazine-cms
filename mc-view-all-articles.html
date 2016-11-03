@@ -79,7 +79,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <!-- Menu Footer-->
                 <li class="user-footer">
                   <div class="pull-left">
-                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                    <a href="#" class="btn btn-default btn-flat" ng-click="showChangPass()">Change password</a>
                   </div>
                   <div class="pull-right">
                     <a href="#" class="btn btn-default btn-flat" ng-click="logout()">Sign out</a>
@@ -190,6 +190,55 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>
               </div>
               <!-- content -->
+              <!-- modal change password -->
+              <div class="modal" id="changePassModal">
+                <div class="modal-dialog" style="width: 50%;">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Change your password</h4>
+                    </div>
+                    <div class="modal-body">
+                      <form name="changePassForm" method="post">
+                        <div class="row">
+                          <div class="col-xs-12">
+                            Current password:
+                            <input type="password" name="currentPass" class="form-control" value="" placeholder="Current password" ng-model="currentPass" required>
+                            <p style="color:red" ng-if="!changePassForm.currentPass.$valid">Current password required! </p>
+                          </div>
+                        </div></br>
+                        <div class="row">
+                          <div class="col-xs-12">
+                            New password:
+                            <input type="password" ng-change="checkRequirePass()" name="newPass" class="form-control" value="" placeholder="New password" ng-model="newPass" required>
+                            <p style="color:red" ng-if="!changePassForm.newPass.$valid">Current password required! </p>
+                          </div>
+                        </div></br>
+                        <div class="row">
+                          <div class="col-xs-12">
+                            Confirm new password:
+                            <input type="password" ng-change="checkRequirePass()" name="confirmNewPass" class="form-control" value="" placeholder="Confirm new password" ng-model="confirmNewPass" required>
+                            <p style="color:red" ng-if="!changePassForm.confirmNewPass.$valid">Confirm new password required!</p>
+                            <p style="color:red" ng-if="!validConfirmPassword">Confirm password not match!</p>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    <div class="modal-footer">
+                      <div class="row">
+                        <div class="col-xs-6">
+                          <button type="button" class="btn btn-success full-width" ng-disabled="!validConfirmPassword || !changePassForm.currentPass.$valid" ng-click="changePass()">Change password</button>
+                        </div>
+                        <div class="col-xs-6">
+                          <button type="button" class="btn btn-warning full-width" ng-click="closeChangePassView()">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+              </div>
+              <!-- modal change passwork end -->
               <!-- modal -->
               <div class="modal" id="detailModal">
                 <div class="modal-dialog">

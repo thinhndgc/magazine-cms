@@ -1498,4 +1498,25 @@ function getUserEmailById($uid){
 }
 // Article API end
 ////////////////////////////////////////////////////////
+function changePassword($uid,$currentPass,$newPass)
+{
+  global $conn;
+  $currentPassMd5 = md5($currentPass);
+  $newPassMd5 = md5($newPass);
+  $query = "SELECT * FROM user WHERE uid = $uid AND password = '$currentPassMd5'";
+  $check= mysqli_num_rows(mysqli_query($conn,$query));
+  if ($check==0) {
+    $returnData = array("status" => 0, "msg" => "Current password not match!");
+  }else {
+    $query = "UPDATE `user` SET `password`= '$newPassMd5' WHERE uid = $uid";
+    $qur = mysqli_query($conn,$query);
+    if($qur){
+      $returnData = array("status" => 1, "msg" => "Your password changed!");
+    }else{
+      $returnData = array("status" => 0, "msg" => "Change password error!");
+    }
+  }
+  @mysqli_close($conn);
+  return $returnData;
+}
 ?>

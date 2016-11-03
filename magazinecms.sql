@@ -1,3 +1,21 @@
+-- phpMyAdmin SQL Dump
+-- version 4.5.1
+-- http://www.phpmyadmin.net
+--
+-- Host: 127.0.0.1
+-- Generation Time: Nov 03, 2016 at 05:35 PM
+-- Server version: 10.1.10-MariaDB
+-- PHP Version: 5.5.33
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
 --
 -- Database: `magazinecms`
 --
@@ -47,7 +65,7 @@ CREATE TABLE `article` (
 --
 
 INSERT INTO `article` (`atid`, `title`, `description`, `file_source`, `img_source`, `date_submit`, `STATUS`) VALUES
-(14, 'New article', 'This is desciption', 'doc-bxeO8bbQu2LE44zVfLHT.docx', 'image-PH9YXimsLKICAxlFhEOk.jpg', '2016-10-27', 'uploaded'),
+(14, 'New article', 'This is desciption', 'doc-bxeO8bbQu2LE44zVfLHT.docx', 'image-PH9YXimsLKICAxlFhEOk.jpg', '2016-10-27', 'submited'),
 (15, 'Truyen cuoi hai huoc', 'Duoi day la mot cau truyen hai vcl cac ban hay doc trong file dinh kem nha hihihihhi', 'doc-0wJogKzsBY271OSLXkhc.docx', 'image-dHZh2iUVCrnXpdBfnck6.jpg', '2016-10-28', 'approved'),
 (16, 'Truyen ngon lu', 'day la truyen ngon lu', 'doc-NZVEmvhzY4xcITxwaHC0.docx', 'image-dq3Uvv5hR1i0TI1AFN7Z.jpg', '2016-10-29', 'uploaded'),
 (17, '9gag article', 'day la cai des cmn ription hihihih', 'doc-yF8ur37uER9X32RAY3kB.docx', 'image-BPu2Yew5XHatUHvrEc8I.jpg', '2016-10-29', 'rejected'),
@@ -119,7 +137,8 @@ INSERT INTO `comment` (`cmid`, `uid`, `atid`, `COMMENT`, `comment_date`) VALUES
 (1, 44, 15, 'hay vcl', '2016-10-28'),
 (2, 44, 15, 'tao se submit luon cho may', '2016-10-28'),
 (3, 44, 17, 'ok check it', '2016-10-29'),
-(4, 41, 18, 'nhu cac nhung van submit', '2016-10-30');
+(4, 41, 18, 'nhu cac nhung van submit', '2016-10-30'),
+(5, 44, 14, 'ok', '2016-11-03');
 
 -- --------------------------------------------------------
 
@@ -202,16 +221,6 @@ INSERT INTO `magazine_academy` (`mid`, `aid`) VALUES
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `mcarticle`
---
-CREATE TABLE `mcarticle` (
-`mc_name` varchar(50)
-,`atid` int(11)
-);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `mc_faculties`
 --
 
@@ -248,6 +257,7 @@ CREATE TABLE `mc_submit_article` (
 
 INSERT INTO `mc_submit_article` (`uid`, `atid`) VALUES
 (41, 18),
+(44, 14),
 (44, 15),
 (44, 17);
 
@@ -314,26 +324,6 @@ INSERT INTO `role` (`rid`, `role_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `studentarticle`
---
-CREATE TABLE `studentarticle` (
-`uid` int(11)
-,`atid` int(11)
-,`st_name` varchar(50)
-,`title` varchar(50)
-,`description` varchar(150)
-,`file_source` varchar(100)
-,`img_source` varchar(100)
-,`date_submit` date
-,`STATUS` varchar(50)
-,`falcuties_name` varchar(50)
-,`magazine_name` varchar(100)
-,`year` int(11)
-);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `students_faculties`
 --
 
@@ -375,8 +365,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`uid`, `full_name`, `dob`, `gender`, `email`, `password`, `phone`) VALUES
-(11, 'admin', NULL, 'male', 'admin@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1676564864),
-(32, 'Tran Thanh Tung', '1994-07-06', 'Male', 'tungtran@gmail.comm', '202cb962ac59075b964b07152d234b70', 123),
+(11, 'admin', NULL, 'male', 'admin@gmail.com', '202cb962ac59075b964b07152d234b70', 1676564864),
+(32, 'Tran Thanh Tung', '0000-00-00', 'Male', 'tungtran@gmail.comm', 'd41d8cd98f00b204e9800998ecf8427e', 123),
 (33, 'Tran Minh Phuong', '1994-02-01', 'Male', 'phuongtran@gmail.comm', '202cb962ac59075b964b07152d234b70', 123),
 (34, 'Pham Duc Long', '1994-02-12', 'Male', 'longpd@gmail.comm', '202cb962ac59075b964b07152d234b70', 123),
 (35, 'Nguyen Minh Tam', '1994-07-20', 'Female', 'tamntm@gmail.comm', '81dc9bdb52d04dc20036dbd8313ed055', 123),
@@ -424,38 +414,6 @@ INSERT INTO `user_role` (`uid`, `rid`) VALUES
 (54, 4),
 (56, 5),
 (57, 4);
-
--- --------------------------------------------------------
-
---
--- Structure for view `mcarticle` exported as a table
---
-DROP TABLE IF EXISTS `mcarticle`;
-CREATE TABLE`mcarticle`(
-    `mc_name` varchar(50) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `atid` int(11) NOT NULL
-);
-
--- --------------------------------------------------------
-
---
--- Structure for view `studentarticle` exported as a table
---
-DROP TABLE IF EXISTS `studentarticle`;
-CREATE TABLE`studentarticle`(
-    `uid` int(11) NOT NULL DEFAULT '0',
-    `atid` int(11) NOT NULL DEFAULT '0',
-    `st_name` varchar(50) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `title` varchar(50) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `description` varchar(150) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `file_source` varchar(100) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `img_source` varchar(100) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `date_submit` date DEFAULT NULL,
-    `STATUS` varchar(50) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `falcuties_name` varchar(50) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `magazine_name` varchar(100) COLLATE latin1_swedish_ci DEFAULT NULL,
-    `year` int(11) DEFAULT NULL
-);
 
 --
 -- Indexes for dumped tables
@@ -593,7 +551,7 @@ ALTER TABLE `article`
 -- AUTO_INCREMENT for table `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `cmid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `cmid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `faculties`
 --

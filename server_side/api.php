@@ -270,6 +270,12 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
     $atid = isset($_POST['atid']) ? $_POST['atid'] : "";
     $data = getAllCommentByArticleId($atid);
     break;
+    case 'changePassword':
+    $uid = isset($_POST['uid']) ? $_POST['uid'] : "";
+    $currentPass = isset($_POST['currentPass']) ? $_POST['currentPass'] : "";
+    $newPass = isset($_POST['newPass']) ? $_POST['newPass'] : "";
+    $data = changePassword($uid,$currentPass,$newPass);
+    break;
     default:
     $data = array("status" => 0, "msg" => "No match function for API call");
     break;
