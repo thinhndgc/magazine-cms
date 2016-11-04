@@ -12,7 +12,7 @@ function sendMailToMC($mcName,$studentName,$articleTitle,$magazine,$toEmail)
   $mail->SMTPSecure = 'tsl';
   $mail->SMTPAuth = true;
   $mail->Username = "ndthinh94@gmail.com";
-  $mail->Password = "nguyentranthao";
+  $mail->Password = "";
   $mail->setFrom('ndthinh94@gmail.com', 'Magazine CMS');
   // $mail->addReplyTo('replyto@example.com', 'First Last');
   $mail->addAddress($toEmail, 'MC');
@@ -37,7 +37,7 @@ function sendMailToMM($mmName,$mcName,$articleTitle,$magazine,$toEmail)
   $mail->SMTPSecure = 'tsl';
   $mail->SMTPAuth = true;
   $mail->Username = "ndthinh94@gmail.com";
-  $mail->Password = "nguyentranthao";
+  $mail->Password = "";
   $mail->setFrom('ndthinh94@gmail.com', 'Magazine CMS');
   $mail->addAddress($toEmail, 'MC');
   $mail->Subject = 'New article has been submited';
@@ -56,7 +56,7 @@ function sendSubmitMailToStudent($mcName,$studentName,$articleTitle,$magazine,$t
   $mail->SMTPSecure = 'tsl';
   $mail->SMTPAuth = true;
   $mail->Username = "ndthinh94@gmail.com";
-  $mail->Password = "nguyentranthao";
+  $mail->Password = "";
   $mail->setFrom('ndthinh94@gmail.com', 'Magazine CMS');
   $mail->addAddress($toEmail, 'MC');
   $mail->Subject = 'New article of your faculties submited';
@@ -75,7 +75,7 @@ function sendApproveMailToStudent($mmName,$studentName,$articleTitle,$magazine,$
   $mail->SMTPSecure = 'tsl';
   $mail->SMTPAuth = true;
   $mail->Username = "ndthinh94@gmail.com";
-  $mail->Password = "nguyentranthao";
+  $mail->Password = "";
   $mail->setFrom('ndthinh94@gmail.com', 'Magazine CMS');
   $mail->addAddress($toEmail, 'MM');
   $mail->Subject = 'Your article '.$articleTitle.' has been aprroved';
@@ -94,7 +94,7 @@ function sendRejectMailToStudent($mmName,$studentName,$articleTitle,$magazine,$t
   $mail->SMTPSecure = 'tsl';
   $mail->SMTPAuth = true;
   $mail->Username = "ndthinh94@gmail.com";
-  $mail->Password = "nguyentranthao";
+  $mail->Password = "";
   $mail->setFrom('ndthinh94@gmail.com', 'Magazine CMS');
   $mail->addAddress($toEmail, 'MM');
   $mail->Subject = 'Your article '.$articleTitle.' has been rejected';
